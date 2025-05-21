@@ -39,7 +39,7 @@ architecture-beta
 | uid      | auto_generate            | 用户唯一标识 |
 | username | String(unique, not null) | 用户名       |
 | password | String(not null)         | 密码         |
-| nickname | String(not null)         | 昵称         |
+| name     | String(not null)         | 用户昵称     |
 | email    | String(not null)         | 邮箱         |
 | role     | String(枚举类Serialize)  | 用户身份     |
 
@@ -185,16 +185,16 @@ POST /user/login
 
 | 参数名   | 类型     | 是否必填 | 说明     |
 | -------- | -------- | -------- | -------- |
-| username | `string` | 是       | 用户名   |
-| password | `string` | 是       | 用户密码 |
+| username | `String` | 是       | 用户名   |
+| password | `String` | 是       | 用户密码 |
 
-✅ **返回参数**（`ResultVO<bool>`）
+✅ **返回参数**（`ResultVO<String>`）
 
 | 字段 | 类型      | 说明            |
 | ---- | --------- | --------------- |
 | code | `int`     | 状态码，200成功 |
-| msg  | `string?` | 错误信息        |
-| data | `bool`    | 登录是否成功    |
+| msg  | `String?` | 错误信息        |
+| data | `String`  | 登录成功的提示字符串|
 
 📌 **示例**
 
@@ -213,7 +213,7 @@ POST /user/login
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "登录成功"
 }
 ```
 
@@ -270,7 +270,7 @@ GET /problem/{problemId}
 
 | 参数名    | 类型     | 是否必填 | 说明    |
 | --------- | -------- | -------- | ------- |
-| problemId | `string` | 是       | 题目 ID |
+| problemId | `String` | 是       | 题目 ID |
 
 ✅ **返回参数**（`ResultVO<ProblemDetail>`）
 
@@ -304,11 +304,11 @@ POST /problem/{problemId}
 
 | 参数名    | 类型     | 是否必填 | 说明       |
 | --------- | -------- | -------- | ---------- |
-| problemId | `string` | 是       | 题目 ID    |
-| lang      | `string` | 是       | 语言       |
-| code      | `string` | 是       | 提交的代码 |
+| problemId | `String` | 是       | 题目 ID    |
+| lang      | `String` | 是       | 语言       |
+| code      | `String` | 是       | 提交的代码 |
 
-✅ **返回参数**（`ResultVO<bool>`）
+✅ **返回参数**（`ResultVO<String>`）
 
 **示例**
 
@@ -316,7 +316,7 @@ POST /problem/{problemId}
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "提交代码成功"
 }
 ```
 
@@ -345,7 +345,8 @@ GET /user
   "data": {
     "username": "admin",
     "email": "admin@example.com",
-    "nickname": "ding"
+    "name": "ding"
+    "role": "admin"
   }
 }
 ```
@@ -364,9 +365,9 @@ POST /user
 
 | 参数名   | 类型     | 是否必填 | 说明   |
 | -------- | -------- | -------- | ------ |
-| username | `string` | 是       | 用户名 |
-| email    | `string` | 是       | 邮箱   |
-| nickname | `String` | 是       | 昵称   |
+| username | `String` | 是       | 用户名 |
+| email    | `String` | 是       | 邮箱   |
+| name     | `String` | 是       | 昵称   |
 
 **示例**
 
@@ -374,17 +375,17 @@ POST /user
 {
   "username": "admin",
   "email": "admin@example.com",
-  "nickname": "zheng"
+  "name": "zheng"
 }
 ```
 
-✅ **返回参数**（`ResultVO<bool>`）
+✅ **返回参数**（`ResultVO<String>`）
 
 ```json
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "更新信息成功"
 }
 ```
 
@@ -402,8 +403,8 @@ POST /user/password
 
 | 参数名      | 类型     | 是否必填 | 说明   |
 | ----------- | -------- | -------- | ------ |
-| oldPassword | `string` | 是       | 旧密码 |
-| newPassword | `string` | 是       | 新密码 |
+| oldPassword | `String` | 是       | 旧密码 |
+| newPassword | `String` | 是       | 新密码 |
 
 **示例**
 
@@ -414,16 +415,23 @@ POST /user/password
 }
 ```
 
-✅ **返回参数**（`ResultVO<bool>`）
+✅ **返回参数**（`ResultVO<String>`）
 
 ```json
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "密码修改成功"
 }
 ```
 
+```json
+{
+  "code": 401,
+  "msg": "旧密码不正确",
+  "data": null
+}
+```
 ---
 
 ### 8. 查询单个评测记录
@@ -487,10 +495,10 @@ POST /user/create
 
 | 参数名   | 类型     | 是否必填 | 说明   |
 | -------- | -------- | -------- | ------ |
-| username | `string` | 是       | 用户名 |
-| password | `string` | 是       | 密码   |
-| email    | `string` | 是       | 邮箱   |
-| nickname | `string` | 是       | 昵称   |
+| username | `String` | 是       | 用户名 |
+| password | `String` | 是       | 密码   |
+| email    | `String` | 是       | 邮箱   |
+| name     | `String` | 是       | 昵称   |
 
 ✅ **返回参数**
 
@@ -498,7 +506,7 @@ POST /user/create
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "创建用户成功"
 }
 ```
 
@@ -524,7 +532,7 @@ DELETE /user/{uid}
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "删除用户成功"
 }
 ```
 
@@ -539,7 +547,7 @@ DELETE /user/{uid}
 ```json
 {
   "code": 404,
-  "msg": "请求的资源不存在",
+  "msg": "用户不存在",
   "data": null
 }
 ```
@@ -567,7 +575,7 @@ POST /problem/create
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "题目创建成功"
 }
 ```
 
@@ -585,7 +593,7 @@ DELETE /problem/{problemId}
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "题目删除成功"
 }
 ```
 
@@ -620,7 +628,7 @@ PUT /problem/{problemId}
 {
   "code": 200,
   "msg": null,
-  "data": true
+  "data": "修改题目成功"
 }
 ```
 
@@ -746,7 +754,8 @@ GET /problem/{problemId}
 | ---- | ----------------- |
 | 200  | 成功              |
 | 204  | 正在处理          |
-| 400  | 请求参数错误      |
 | 401  | 未认证 / 登录失效 |
+| 403  | 用户权限不足      |
+| 404  | 找不到资源        |
 | 409  | Conflict资源冲突  |
 | 500  | 服务器内部错误    |
