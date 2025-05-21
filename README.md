@@ -39,6 +39,7 @@ architecture-beta
 | uid      | auto_generate            | 用户唯一标识 |
 | username | String(unique, not null) | 用户名       |
 | password | String(not null)         | 密码         |
+| nickname | String(not null)         | 昵称         |
 | email    | String(not null)         | 邮箱         |
 | role     | String(枚举类Serialize)  | 用户身份     |
 
@@ -86,12 +87,13 @@ architecture-beta
 
 **题目内容表**
 
-| 字段        | 数据类型                              | 描述                         |
-| ----------- | ------------------------------------- | ---------------------------- |
-| problem_id  | auto_generate                         | 题目唯一标识                 |
-| title       | String                                | 标题                         |
-| description | String                                | 描述                         |
-| stdio       | `List<Tuple<String, String, String>>` | 样例标准输入，输出，错误输出 |
+| 字段          | 数据类型                              | 描述                           |
+| ------------- | ------------------------------------- | ------------------------------ |
+| problem_id    | auto_generate                         | 题目唯一标识                   |
+| title         | String                                | 标题                           |
+| description   | String                                | 描述                           |
+| example_stdio | `List<Tuple<String, String, String>>` | 样例标准输入，输出，错误输出   |
+| stdio         | `List<Tuple<String, String, String>>` | 测试点标准输入，输出，错误输出 |
 
 **题目测试表**
 
@@ -169,7 +171,7 @@ B--->C
 
 统一接口前缀：`/api/v1`
 
-## HTTP
+## HTTP普通
 
 ### 1. 用户登录接口
 
@@ -219,13 +221,13 @@ POST /user/login
 {
   "code": 401,
   "msg": "用户名或密码错误",
-  "data": false
+  "data": null
 }
 ```
 
 ------
 
-### 2. 获取题目简要信息列表
+### 2. 获取全部题目简要信息
 
 📍 **URL**
 
@@ -248,8 +250,7 @@ GET /problem
   "data": [
     {
       "problemId": "xxxx-xxxx-xxxx-xxxx",
-      "title": "两数之和",
-      "difficulty": "Easy"
+      "title": "两数之和"
     }
   ]
 }
@@ -257,7 +258,7 @@ GET /problem
 
 ------
 
-### 3. 获取题目详细信息
+### 3. 获取单个题目详细信息
 
 📍 **URL**
 
@@ -280,10 +281,9 @@ GET /problem/{problemId}
   "code": 200,
   "msg": null,
   "data": {
-    "problemId": "p1",
     "title": "两数之和",
     "description": "...",
-    "stdio": [
+    "example_stdio": [
       ["1 1", "2", ""]
     ]
   }
@@ -344,7 +344,8 @@ GET /user
   "msg": null,
   "data": {
     "username": "admin",
-    "email": "admin@example.com"
+    "email": "admin@example.com",
+    "nickname": "ding"
   }
 }
 ```
@@ -361,17 +362,19 @@ POST /user
 
 🔧 **请求体**
 
-| 参数名   | 类型     | 是否必填 | 说明    |
-| -------- | -------- | -------- | ------- |
-| username | `string` | 是       | 题目 ID |
-| email    | `string` | 是       | 邮箱    |
+| 参数名   | 类型     | 是否必填 | 说明   |
+| -------- | -------- | -------- | ------ |
+| username | `string` | 是       | 用户名 |
+| email    | `string` | 是       | 邮箱   |
+| nickname | `String` | 是       | 昵称   |
 
 **示例**
 
 ```json
 {
   "username": "admin",
-  "email": "admin@example.com"
+  "email": "admin@example.com",
+  "nickname": "zheng"
 }
 ```
 
@@ -400,7 +403,7 @@ POST /user/password
 | 参数名      | 类型     | 是否必填 | 说明   |
 | ----------- | -------- | -------- | ------ |
 | oldPassword | `string` | 是       | 旧密码 |
-| newPassword | `string` | 是       | 邮箱   |
+| newPassword | `string` | 是       | 新密码 |
 
 **示例**
 
@@ -438,7 +441,6 @@ POST /problem/submit/{submitId}
   "code": 200,
   "msg": null,
   "data": {
-    "submitId": "...",
     "lang": "C++",
     "code": "int main() {}",
     "memory": 1145141,
@@ -465,6 +467,204 @@ POST /problem/submit/{submitId}
 {
   "code": 404,
   "msg": "评测记录不存在",
+  "data": null
+}
+```
+
+## HTTP管理
+
+统一接口前缀：`/mgr`
+
+### 1. 创建用户
+
+🎈 **URL**
+
+```http
+POST /user/create
+```
+
+🔨**请求参数**
+
+| 参数名   | 类型     | 是否必填 | 说明   |
+| -------- | -------- | -------- | ------ |
+| username | `string` | 是       | 用户名 |
+| password | `string` | 是       | 密码   |
+| email    | `string` | 是       | 邮箱   |
+| nickname | `string` | 是       | 昵称   |
+
+✅ **返回参数**
+
+```json
+{
+  "code": 200,
+  "msg": null,
+  "data": true
+}
+```
+
+```json
+{
+  "code": 409,
+  "msg": "用户名已存在",
+  "data": null
+}
+```
+
+### 2. 删除用户
+
+ **URL**
+
+```http
+DELETE /user/{uid}
+```
+
+✅ **返回参数**
+
+```json
+{
+  "code": 200,
+  "msg": null,
+  "data": true
+}
+```
+
+```json
+{
+  "code": 403,
+  "msg": "权限不足",
+  "data": null,
+}
+```
+
+```json
+{
+  "code": 404,
+  "msg": "请求的资源不存在",
+  "data": null
+}
+```
+
+### 3. 创建题目
+
+**URL**
+
+```http
+POST /problem/create
+```
+
+**请求参数**
+
+| 参数名        | 类型                                  | 是否必填 | 说明                           |
+| ------------- | ------------------------------------- | -------- | ------------------------------ |
+| title         | String                                | 是       | 标题                           |
+| description   | String                                | 是       | 描述                           |
+| example_stdio | `List<Tuple<String, String, String>>` | 否       | 样例标准输入，输出，错误输出   |
+| stdio         | `List<Tuple<String, String, String>>` | 否       | 测试点标准输入，输出，错误输出 |
+
+**返回参数**
+
+```json
+{
+  "code": 200,
+  "msg": null,
+  "data": true
+}
+```
+
+### 4. 删除题目
+
+**URL**
+
+```http
+DELETE /problem/{problemId}
+```
+
+**返回参数**
+
+```json
+{
+  "code": 200,
+  "msg": null,
+  "data": true
+}
+```
+
+```json
+{
+  "code": 404,
+  "msg": "题目不存在",
+  "data": null
+}
+```
+
+### 5. 修改题目
+
+**URL**
+
+```http
+PUT /problem/{problemId}
+```
+
+**请求参数**
+
+| 参数名        | 类型                                  | 是否必填 | 说明                           |
+| ------------- | ------------------------------------- | -------- | ------------------------------ |
+| title         | String                                | 是       | 标题                           |
+| description   | String                                | 是       | 描述                           |
+| example_stdio | `List<Tuple<String, String, String>>` | 否       | 样例标准输入，输出，错误输出   |
+| stdio         | `List<Tuple<String, String, String>>` | 否       | 测试点标准输入，输出，错误输出 |
+
+**返回参数**
+
+```json
+{
+  "code": 200,
+  "msg": null,
+  "data": true
+}
+```
+
+```json
+{
+  "code": 404,
+  "msg": "题目不存在",
+  "data": null
+}
+```
+
+### 6. 获取单个题目详细信息
+
+> 管理员也可使用HTTP普通接口，因此可以通过`获取题目简要信息列表`来获得所有题目的`problemId`
+
+**URL**
+
+```http
+GET /problem/{problemId}
+```
+
+**返回参数**
+
+```json
+{
+  "code": 200,
+  "msg": null,
+  "data": {
+    "title": "两数之和",
+    "description": "给定两个整数，输出它们的和",
+    "example_stdio": [
+      ["1 1", "2", ""]
+    ],
+    "stdio": [
+      ["114 514", "1919", ""]
+    ]
+  }
+}
+```
+
+```json
+{
+  "code": 404,
+  "msg": "题目不存在",
   "data": null
 }
 ```
@@ -508,7 +708,7 @@ POST /problem/submit/{submitId}
 
 > 这里暂时没有考虑使用懒处理，主要是为了代码统一，后续可以进一步优化性能
 
-# 2. 获取题目所有评测记录
+### 2. 获取题目所有评测记录
 
 📍 **URL**
 
@@ -524,7 +724,7 @@ POST /problem/submit/{submitId}
 
 同[1. 获取用户所有评测记录](#1-获取用户所有评测记录)
 
-# 3. 获取用户特定题目所有评测记录
+### 3. 获取用户特定题目所有评测记录
 
 📍 **URL**
 
@@ -548,4 +748,5 @@ POST /problem/submit/{submitId}
 | 204  | 正在处理          |
 | 400  | 请求参数错误      |
 | 401  | 未认证 / 登录失效 |
+| 409  | Conflict资源冲突  |
 | 500  | 服务器内部错误    |
