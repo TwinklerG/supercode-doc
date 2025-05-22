@@ -39,7 +39,7 @@ architecture-beta
 | uid      | auto_generate            | 用户唯一标识 |
 | username | String(unique, not null) | 用户名       |
 | password | String(not null)         | 密码         |
-| name     | String(not null)         | 用户昵称     |
+| nickname | String(not null)         | 用户昵称     |
 | email    | String(not null)         | 邮箱         |
 | role     | String(枚举类Serialize)  | 用户身份     |
 
@@ -345,7 +345,7 @@ GET /user
   "data": {
     "username": "admin",
     "email": "admin@example.com",
-    "name": "ding"
+    "nickname": "ding"
     "role": "admin"
   }
 }
@@ -367,7 +367,7 @@ POST /user
 | -------- | -------- | -------- | ------ |
 | username | `String` | 是       | 用户名 |
 | email    | `String` | 是       | 邮箱   |
-| name     | `String` | 是       | 昵称   |
+| nickname | `String` | 是       | 昵称   |
 
 **示例**
 
@@ -375,7 +375,7 @@ POST /user
 {
   "username": "admin",
   "email": "admin@example.com",
-  "name": "zheng"
+  "nickname": "zheng"
 }
 ```
 
@@ -498,7 +498,7 @@ POST /user/create
 | username | `String` | 是       | 用户名 |
 | password | `String` | 是       | 密码   |
 | email    | `String` | 是       | 邮箱   |
-| name     | `String` | 是       | 昵称   |
+| nickname | `String` | 是       | 昵称   |
 
 ✅ **返回参数**
 
@@ -523,7 +523,7 @@ POST /user/create
  **URL**
 
 ```http
-DELETE /user/{uid}
+DELETE /user/{username}
 ```
 
 ✅ **返回参数**
@@ -610,13 +610,14 @@ DELETE /problem/{problemId}
 **URL**
 
 ```http
-PUT /problem/{problemId}
+PUT /problem
 ```
 
 **请求参数**
 
 | 参数名        | 类型                                  | 是否必填 | 说明                           |
 | ------------- | ------------------------------------- | -------- | ------------------------------ |
+| problemId     | String                                | 是       | 题目编号 
 | title         | String                                | 是       | 标题                           |
 | description   | String                                | 是       | 描述                           |
 | example_stdio | `List<Tuple<String, String, String>>` | 否       | 样例标准输入，输出，错误输出   |
