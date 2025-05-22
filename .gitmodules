@@ -1,0 +1,6 @@
+[submodule "supercode-flutter"]
+	path = supercode-flutter
+	url = https://github.com/TwinklerG/supercode-flutter
+[submodule "supercode-axum"]
+	path = supercode-axum
+	url = https://github.com/TwinklerG/supercode-axum

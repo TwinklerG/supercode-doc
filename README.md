@@ -678,6 +678,94 @@ GET /problem/{problemId}
 }
 ```
 
+## 消息队列RabbitMQ
+
+使用两个`Stream`，名称分别为`Server2Runner`和`Runner2Server`
+
+### Server2Runner
+
+**生产者Producer**
+
+示例：两数之和
+
+```yaml
+commands:
+- command: sh
+  args:
+  - -c
+  - |-
+    echo '#include <iostream>
+    using namespace std;
+    int main() {
+        int a, b;
+        cin >> a >> b;
+        cout << a << " + " << b << " = " << a + b << endl;
+    }' > main.cpp
+  input: ''
+  config:
+    time_limit: 1
+    time_reserved: 1
+    memory_limit: 256000
+    memory_reserved: 4096000
+    large_stack: false
+    output_limit: 0
+    process_limit: 0
+- command: g++
+  args:
+  - main.cpp
+  - -o
+  - main
+  input: ''
+  config:
+    time_limit: 1
+    time_reserved: 1
+    memory_limit: 256000
+    memory_reserved: 4096000
+    large_stack: false
+    output_limit: 0
+    process_limit: 0
+- command: ./main
+  args: []
+  input: 1 2
+  config:
+    time_limit: 1
+    time_reserved: 1
+    memory_limit: 256000
+    memory_reserved: 4096000
+    large_stack: false
+    output_limit: 0
+    process_limit: 0
+image: gcc:14.2
+submit_id: '......'
+```
+
+### Runner2Server
+
+**生产者Producer**
+
+示例：两数之和
+
+```yaml
+sandbox_results:
+- state: Success
+  stdout: ''
+  stderr: ''
+  time: 0
+  memory: 1796
+- state: Success
+  stdout: ''
+  stderr: ''
+  time: 120
+  memory: 73572
+- state: Success
+  stdout: |
+    1 + 2 = 3
+  stderr: ''
+  time: 0
+  memory: 3032
+submit_id: '......'
+```
+
 ## Websockets
 
 ### 1. 获取用户所有评测记录
