@@ -4,3 +4,6 @@
 [submodule "supercode-axum"]
 	path = supercode-axum
 	url = https://github.com/TwinklerG/supercode-axum
+[submodule "sandbox-rs"]
+	path = sandbox-rs
+	url = https://github.com/TwinklerG/sandbox-rs
