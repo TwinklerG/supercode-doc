@@ -212,7 +212,7 @@ POST /user/login
 {
   "code": 200,
   "msg": null,
-  "data": "登录成功"
+  "data": "xxxxxxxxx"
 }
 ```
 

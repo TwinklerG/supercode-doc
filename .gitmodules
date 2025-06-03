@@ -1,9 +1,12 @@
 [submodule "supercode-flutter"]
 	path = supercode-flutter
 	url = https://github.com/TwinklerG/supercode-flutter
-[submodule "supercode-axum"]
-	path = supercode-axum
-	url = https://github.com/TwinklerG/supercode-axum
+[submodule "supercode-rust"]
+	path = supercode-rust
+	url = https://github.com/TwinklerG/supercode-rust
 [submodule "sandbox-rs"]
 	path = sandbox-rs
 	url = https://github.com/TwinklerG/sandbox-rs
+[submodule "supercode-springboot"]
+	path = supercode-springboot
+	url = https://github.com/jeremyjy1/supercode
