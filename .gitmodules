@@ -10,3 +10,6 @@
 [submodule "supercode-springboot"]
 	path = supercode-springboot
 	url = https://github.com/jeremyjy1/supercode
+[submodule "supercode-workload"]
+	path = supercode-workload
+	url = https://github.com/TwinklerG/supercode-workload
