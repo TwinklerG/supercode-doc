@@ -13,3 +13,6 @@
 [submodule "supercode-workload"]
 	path = supercode-workload
 	url = https://github.com/TwinklerG/supercode-workload
+[submodule "supercode-mgr-vue"]
+	path = supercode-mgr-vue
+	url = https://github.com/QMJZR/supercode-mgr-vue
